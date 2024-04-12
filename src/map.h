@@ -10,7 +10,7 @@
  */
 class Map {
 
-    private:
+    public:
 
         /**
          * Region: A class representing a region (sector) of the map.
@@ -20,6 +20,7 @@ class Map {
             public:
 
                 const char* name;
+                const char* file_path;
                 int x;
                 int y;
                 std::shared_ptr<Region> north = nullptr;
@@ -34,10 +35,7 @@ class Map {
                  * @param x     x-coordinate.
                  * @param y     y-coordinate.
                  */
-                Region(const char* name, int x, int y) :
-                    name(name),
-                    x(x),
-                    y(y) {}
+                Region(const char* name, const char* file_path, int x, int y);
 
                 /**
                  * Displays the name of each connected map region.
@@ -51,9 +49,7 @@ class Map {
          *
          * @param new_region    Shared pointer to the new region.
          */
-        void applyConnections(std::shared_ptr<Region> new_region);
-
-    public:
+        void applyConnections(std::shared_ptr<Region>& new_region);
 
         /**
          * Map linking region names to region instances.
@@ -76,6 +72,6 @@ class Map {
          * @param x     x-coordinate.
          * @param y     y-coordinate.
          */
-        void addRegion(const char* name, int x, int y);
+        void addRegion(const char* name, const char* file_path, int x, int y);
 
 };

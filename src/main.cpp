@@ -1,22 +1,24 @@
-#include <iostream>
+#include "mainwindow.h"
+#include "canvas.h"
 
-#include "Map.h"
+#include <QApplication>
 
 
-int main() {
+int main(int argc, char **argv) {
 
+    QApplication app(argc, argv);
+    MainWindow mainWindow;
+    GameCanvas canvas(&mainWindow);
     Map map;
 
-    map.addRegion("center", 1, 1);
-    map.addRegion("left", 0, 1);
-    map.addRegion("right", 2, 1);
-    map.addRegion("top", 1, 2);
-    map.addRegion("bottom", 1, 0);
+    map.addRegion("Rocky Road", "../images/map-regions/rocky-road.png", 0, 0);
+    map.addRegion("Snowy Summit", "../images/map-regions/snowy-summit.png", 1, 0);
+    map.addRegion("Grassy Grove", "../images/map-regions/grassy-grove.png", 1, 1);
 
-    for (auto& reg : map.regions) {
-        reg.second->showConnections();
-        std::cout << std::endl;
-    }
+    canvas.setRegion(map.getRegion("Rocky Road"));
 
-    return 0;
+    mainWindow.show();
+
+    return QApplication::exec();
+
 }

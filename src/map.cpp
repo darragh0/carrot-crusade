@@ -1,7 +1,13 @@
 #include <iostream>
-#include <memory>
 
-#include "Map.h"
+#include "map.h"
+
+
+Map::Region::Region(const char *name, const char *file_path, int x, int y)
+    : name(name),
+      file_path(file_path),
+      x(x),
+      y(y) {}
 
 
 void Map::Region::showConnections() {
@@ -22,8 +28,8 @@ void Map::Region::showConnections() {
 }
 
 
-void Map::addRegion(const char *name, int x, int y) {
-    std::shared_ptr <Region> region = std::make_shared<Region>(name, x, y);
+void Map::addRegion(const char* name, const char* file_path, int x, int y) {
+    std::shared_ptr<Region> region = std::make_shared<Region>(name, file_path, x, y);
 
     this->applyConnections(region);
     this->regions[name] = region;
@@ -35,11 +41,11 @@ std::shared_ptr<Map::Region> Map::getRegion(const char* name) {
 }
 
 
-void Map::applyConnections(std::shared_ptr <Region> new_region) {
+void Map::applyConnections(std::shared_ptr<Region>& new_region) {
 
     for (auto &pair: this->regions) {
 
-        std::shared_ptr <Region> region = pair.second;
+        std::shared_ptr<Region> region = pair.second;
 
         if (region->y == new_region->y) {
 
