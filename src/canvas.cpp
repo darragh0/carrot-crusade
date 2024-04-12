@@ -4,7 +4,7 @@
 GameSprite::GameSprite(QWidget *parent, const char *name)
     : QLabel(parent),
       name(name),
-      pixmap(std::make_shared<QPixmap>("../images/carrot.png")) {
+      pixmap(std::make_shared<QPixmap>("../images/sprites/carrot.png")) {
 
     this->setFixedSize(this->pixmap->size());
     this->setPixmap(*this->pixmap);
