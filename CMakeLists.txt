@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.27)
 project(caret_crusade)
 
+set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -15,13 +17,13 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 add_executable(caret_crusade
-        src/main.cpp
-        src/map.h
-        src/map.cpp
-        src/mainwindow.h
-        src/mainwindow.cpp
-        src/canvas.h
-        src/canvas.cpp
+        src/cpp/main.cpp
+        src/h/map.h
+        src/cpp/map.cpp
+        src/h/mainwindow.h
+        src/cpp/mainwindow.cpp
+        src/h/canvas.h
+        src/cpp/canvas.cpp
 )
 
 target_link_libraries(caret_crusade
