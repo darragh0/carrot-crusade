@@ -16,8 +16,8 @@ namespace game {
     public:
 
         const std::string& name;
-        const QPixmap pixmap;
-        const QImage outline;
+        QPixmap* pixmap;
+        QImage outline;
         std::unordered_map<Direction, Region*> exits;
 
         /**

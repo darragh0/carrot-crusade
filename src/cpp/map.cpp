@@ -4,8 +4,8 @@
 
 game::Region::Region(const std::string& name, const std::string& img_src, const std::string& outlined_img_src)
     : name(name),
-      pixmap(QPixmap(img_src.c_str())),
-      outline((QPixmap(outlined_img_src.c_str())).toImage()) {
+      pixmap(new QPixmap(img_src.c_str())),
+      outline((new QPixmap(outlined_img_src.c_str()))->toImage()) {  // TODO: Cleanup
 }
 
 

@@ -55,12 +55,12 @@ void game::Canvas::setRegion(Region* map_region, int x, int y) {
 
 //    this->top_textbox->setText(map_region->name.c_str());
 
-    int width = map_region->pixmap.width() * game::PIXEL_SCALE_FACTOR;
-    int height = map_region->pixmap.height() * game::PIXEL_SCALE_FACTOR;
+    int width = map_region->pixmap->width() * game::PIXEL_SCALE_FACTOR;
+    int height = map_region->pixmap->height() * game::PIXEL_SCALE_FACTOR;
 
     this->parentWidget()->setFixedSize(width, height);
     this->setFixedSize(width, height);
-    this->setPixmap(map_region->pixmap.scaled(width, height, Qt::KeepAspectRatio));
+    this->setPixmap(map_region->pixmap->scaled(width, height, Qt::KeepAspectRatio));
 
     this->region = map_region;
     this->carrot->setCoords(x, y);
@@ -85,6 +85,7 @@ void game::Canvas::moveCarrot(game::Direction dir) {
     }
 
     if (at_edge) {
+
         QRgb current_pixel = this->region->outline.pixel(current_x, current_y);
 
         if (qGreen(current_pixel) != 255)
@@ -94,9 +95,7 @@ void game::Canvas::moveCarrot(game::Direction dir) {
         next_y = (VERTICAL_TILES + next_y) % game::VERTICAL_TILES;
 
         Region* next_region = this->region->getExit(dir);
-        std::cout << next_region << std::endl;
         this->setRegion(next_region, next_x, next_y);
-
         return;
     }
 

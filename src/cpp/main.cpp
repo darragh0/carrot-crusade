@@ -19,18 +19,27 @@ int main(int argc, char **argv) {
 
     game::Region rocky_road(
         "Rocky Road",
-        "../images/map-regions/rocky-road-outline.png",
+        "../images/map-regions/rocky-road.png",
         "../images/map-regions/rocky-road-outline.png"
     );
 
     game::Region snowy_summit(
-            "Snowy Summit",
-        "../images/map-regions/snowy-summit-outline.png",
-        "../images/map-regions/snowy-summit.png"
+        "Snowy Summit",
+        "../images/map-regions/snowy-summit.png",
+        "../images/map-regions/snowy-summit-outline.png"
     );
 
+    game::Region grassy_grove(
+        "Grassy Grove",
+        "../images/map-regions/grassy-grove.png",
+        "../images/map-regions/grassy-grove-outline.png"
+    );
+
+    // Setting up connections
     rocky_road.setExit(game::EAST, &snowy_summit);
     snowy_summit.setExit(game::WEST, &rocky_road);
+    snowy_summit.setExit(game::NORTH, &grassy_grove);
+    grassy_grove.setExit(game::SOUTH, &snowy_summit);
     canvas.setRegion(&rocky_road, 5, 35);
 
     mainWindow.show();
