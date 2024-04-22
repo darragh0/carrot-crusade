@@ -2,88 +2,126 @@
 #include <iostream>
 
 
-game::Sprite::Sprite(QWidget *parent, const std::string& name)
+game::Sprite::Sprite(QWidget *parent, const std::string& name, int x, int y)
     : QLabel(parent),
       name(name),
-      pixmap(std::make_shared<QPixmap>("../images/sprites/carrot.png")) {
+      center_x(x),
+      center_y(y),
+      pixmap(new QPixmap("../images/sprites/carrot.png")) {
 
-    this->setFixedSize(56, 120);
-    this->setPixmap(this->pixmap->scaled(56, 120, Qt::KeepAspectRatio));
+    int width = this->pixmap->width() * game::PIXEL_SCALE_FACTOR;
+    int height = this->pixmap->height() * game::PIXEL_SCALE_FACTOR;
+
+    this->setFixedSize(width, height);
+    this->setPixmap(this->pixmap->scaled(width, height, Qt::KeepAspectRatio));
+}
+
+
+game::Sprite::~Sprite() {
+    delete this->pixmap;
 }
 
 
 int game::Sprite::getX() {
-    return this->x() / 8 + 3;  // TODO: pivot_point attribute on Sprite
+    return (this->x() / game::PIXEL_SCALE_FACTOR) + this->center_x;
 }
 
 
 int game::Sprite::getY() {
-    return this->y() / 8 + 9;
+    return (this->y() / game::PIXEL_SCALE_FACTOR) + this->center_y;
+}
+
+
+void game::Sprite::setCoords(int& x, int& y) {
+    this->move((x - this->center_x) * game::PIXEL_SCALE_FACTOR, (y - this->center_y) * game::PIXEL_SCALE_FACTOR);
 }
 
 
 game::Canvas::Canvas(QWidget* parent)
     : QLabel(parent),
-      carrot(std::make_shared<Sprite>(parent, "Carrot")) {
+      carrot(new Sprite(parent, "Carrot", game::CARROT_CENTER_X, game::CARROT_CENTER_Y)) {
 
     this->setFocus();  // To notify on keyPressEvent
 }
 
 
-void game::Canvas::setRegion(Region* map_region) {
-
-    QPixmap pixmap(map_region->file_path.c_str());
-
-    this->parentWidget()->setFixedSize(1024, 576);
-    this->setFixedSize(1024, 576);
-    this->setPixmap(pixmap.scaled(1024, 576, Qt::KeepAspectRatio));
-
-    this->region = map_region;
-
-    // Center carrot vertically
-    this->carrot->move(0, 36*8 - this->carrot->height());
+game::Canvas::~Canvas() {
+    delete this->region;
+    delete this->carrot;
 }
 
 
-void game::Canvas::moveCarrot(int dx, int dy) {
+void game::Canvas::setRegion(Region* map_region, int x, int y) {
 
-    int next_x = this->carrot->getX() + dx;
-    int next_y = this->carrot->getY() + dy;
+//    this->top_textbox->setText(map_region->name.c_str());
 
-    if (next_x == -1 || next_x == 128)
+    int width = map_region->pixmap.width() * game::PIXEL_SCALE_FACTOR;
+    int height = map_region->pixmap.height() * game::PIXEL_SCALE_FACTOR;
+
+    this->parentWidget()->setFixedSize(width, height);
+    this->setFixedSize(width, height);
+    this->setPixmap(map_region->pixmap.scaled(width, height, Qt::KeepAspectRatio));
+
+    this->region = map_region;
+    this->carrot->setCoords(x, y);
+}
+
+
+void game::Canvas::moveCarrot(game::Direction dir) {
+
+    const int current_x = this->carrot->getX();
+    const int current_y = this->carrot->getY();
+
+    int next_x = current_x;
+    int next_y = current_y;
+
+    bool at_edge;
+
+    switch (dir) {
+        case NORTH: at_edge = (--next_y == -1); break;
+        case EAST: at_edge = (++next_x == game::HORIZONTAL_TILES); break;
+        case SOUTH: at_edge = (++next_y == game::VERTICAL_TILES); break;
+        case WEST: at_edge = (--next_x == -1); break;
+    }
+
+    if (at_edge) {
+        QRgb current_pixel = this->region->outline.pixel(current_x, current_y);
+
+        if (qGreen(current_pixel) != 255)
+            return;
+
+        next_x = (HORIZONTAL_TILES + next_x) % game::HORIZONTAL_TILES;
+        next_y = (VERTICAL_TILES + next_y) % game::VERTICAL_TILES;
+
+        Region* next_region = this->region->getExit(dir);
+        std::cout << next_region << std::endl;
+        this->setRegion(next_region, next_x, next_y);
+
+        return;
+    }
+
+    QRgb next_pixel = this->region->outline.pixel(next_x, next_y);
+
+    if (qRed(next_pixel) == 255)
         return;
 
-    if (next_y == -1 || next_y == 72)
-        return;
+    this->carrot->setCoords(next_x, next_y);
+    std::cout << "x: " << next_x << "\ty: " << next_y << std::endl;
 
-//    for (std::pair<int, int>& pair : this->region->forbidden_coordinates) {
-//        if (pair.first == next_x && pair.second == next_y)
-//            return;
-//    }
-
-    this->carrot->move(this->carrot->x() + (dx * 8), this->carrot->y() + (dy * 8));
-    std::cout << next_x << ", " << next_y << std::endl;
 }
 
 
 void game::Canvas::keyPressEvent(QKeyEvent *event) {
 
+    Direction dir;
+
     switch (event->key()) {
-
-        case Qt::Key_W:
-            this->moveCarrot(0, -1);
-            break;
-
-        case Qt::Key_A:
-            this->moveCarrot(-1, 0);
-            break;
-
-        case Qt::Key_S:
-            this->moveCarrot(0, 1);
-            break;
-
-        case Qt::Key_D:
-            this->moveCarrot(1, 0);
-            break;
+        case Qt::Key_W: dir = Direction::NORTH; break;
+        case Qt::Key_A: dir = Direction::WEST; break;
+        case Qt::Key_S: dir = Direction::SOUTH; break;
+        case Qt::Key_D: dir = Direction::EAST; break;
+        default: return;
     }
+
+    this->moveCarrot(dir);
 }

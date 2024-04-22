@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <string>
 #include <QLabel>
 #include <QKeyEvent>
 
@@ -10,6 +8,7 @@
 
 namespace game {
 
+
     class Sprite : public QLabel {
 
         Q_OBJECT
@@ -17,12 +16,17 @@ namespace game {
         public:
 
             const std::string& name;
-            const std::shared_ptr<QPixmap> pixmap;
+            QPixmap* pixmap;
+            int center_x;
+            int center_y;
 
-            explicit Sprite(QWidget* parent, const std::string& name);
+            explicit Sprite(QWidget* parent, const std::string& name, int center_x, int center_y);
+            ~Sprite() override;
 
             int getX();
             int getY();
+
+            void setCoords(int& x, int& y);
     };
 
 
@@ -32,13 +36,16 @@ namespace game {
 
         public:
 
-            std::shared_ptr<Sprite> carrot;
+            Sprite* carrot;
             Region* region = nullptr;
+            QLabel* top_textbox = nullptr;
+            QLabel* bottom_textbox = nullptr;
 
             explicit Canvas(QWidget* parent);
+            ~Canvas() override;
 
-            void setRegion(Region* map_region);
-            void moveCarrot(int dx, int dy);
+            void setRegion(Region* map_region, int x, int y);
+            void moveCarrot(Direction dir);
 
         protected:
 

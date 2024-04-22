@@ -1,11 +1,12 @@
 #pragma once
 
 #include <string>
-#include <vector>
+#include <unordered_map>
+#include "util.h"
+#include <QPixmap>
 
 
 namespace game {
-
 
     /**
      * Region: A class representing a region (sector) of the map.
@@ -14,21 +15,25 @@ namespace game {
 
     public:
 
-        const std::string &name;
-        const std::string &file_path;
-        std::vector<std::pair<int, int>> forbidden_coordinates;
-        Region* north = nullptr;
-        Region* east = nullptr;
-        Region* south = nullptr;
-        Region* west = nullptr;
+        const std::string& name;
+        const QPixmap pixmap;
+        const QImage outline;
+        std::unordered_map<Direction, Region*> exits;
 
         /**
          * Region constructor.
          *
          * @param name  Name of the region.
          */
-        Region(const std::string &name, const std::string &file_path);
+        Region(const std::string& name, const std::string& img_src, const std::string& outlined_img_src);
 
+        /**
+         * Region destructor.
+         */
+         ~Region() = default;
+
+         void setExit(Direction dir, Region* region);
+         Region* getExit(Direction dir);
     };
 
 }
