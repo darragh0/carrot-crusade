@@ -9,7 +9,7 @@
 int main(int argc, char **argv) {
 
     QApplication app(argc, argv);
-    QSplashScreen splash(QPixmap("../images/home-screen.png"));
+    QSplashScreen splash(QPixmap("../images/misc/splash.png"));
     splash.show();
 
     QThread::sleep(1);
@@ -19,20 +19,26 @@ int main(int argc, char **argv) {
 
     game::Region rocky_road(
         "Rocky Road",
-        "../images/map-regions/rocky-road.png",
-        "../images/map-regions/rocky-road-outline.png"
+        "../images/map-regions/rocky-road/src.png",
+        "../images/map-regions/rocky-road/outline.png"
     );
 
     game::Region snowy_summit(
         "Snowy Summit",
-        "../images/map-regions/snowy-summit.png",
-        "../images/map-regions/snowy-summit-outline.png"
+        "../images/map-regions/snowy-summit/src.png",
+        "../images/map-regions/snowy-summit/outline.png"
     );
 
     game::Region grassy_grove(
         "Grassy Grove",
-        "../images/map-regions/grassy-grove.png",
-        "../images/map-regions/grassy-grove-outline.png"
+        "../images/map-regions/grassy-grove/src.png",
+        "../images/map-regions/grassy-grove/outline.png"
+    );
+
+    game::Region luminous_lake(
+        "Luminous Lake",
+        "../images/map-regions/luminous-lake/src.png",
+        "../images/map-regions/luminous-lake/outline.png"
     );
 
     // Setting up connections
@@ -40,6 +46,8 @@ int main(int argc, char **argv) {
     snowy_summit.setExit(game::WEST, &rocky_road);
     snowy_summit.setExit(game::NORTH, &grassy_grove);
     grassy_grove.setExit(game::SOUTH, &snowy_summit);
+    grassy_grove.setExit(game::NORTH, &luminous_lake);
+    luminous_lake.setExit(game::SOUTH, &grassy_grove);
     canvas.setRegion(&rocky_road, 5, 35);
 
     mainWindow.show();
