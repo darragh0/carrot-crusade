@@ -1,0 +1,5 @@
+[general]
+name = "Grassy Grove"
+
+[exits]
+east = "Snowy Summit"
