@@ -7,6 +7,6 @@ namespace game {
     const int HORIZONTAL_TILES = 128;
     const int VERTICAL_TILES = 72;
     const int CARROT_ORIGIN_X = 3;
-    const int CARROT_ORIGIN_Y = 9;
+    const int CARROT_ORIGIN_Y = 14;
 
 }
