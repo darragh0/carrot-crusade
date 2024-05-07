@@ -3,4 +3,5 @@ name = "Grassy Grove"
 
 [exits]
 north = "Luminous Lake"
+east = "Candy Crescent"
 south = "Snowy Summit"

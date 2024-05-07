@@ -1,7 +1,6 @@
 #include <QApplication>
 #include <QSplashScreen>
 #include <QThread>
-
 #include "../h/mainwindow.h"
 #include "../h/canvas.h"
 
@@ -41,12 +40,20 @@ int main(int argc, char **argv) {
         "../images/map-regions/luminous-lake/outline.png"
     );
 
+    game::Region candy_crescent(
+        "Candy Crescent",
+        "../images/map-regions/candy-crescent/src.png",
+        "../images/map-regions/candy-crescent/outline.png"
+    );
+
     // Setting up connections
     rocky_road.setExit(game::EAST, &snowy_summit);
     snowy_summit.setExit(game::WEST, &rocky_road);
     snowy_summit.setExit(game::NORTH, &grassy_grove);
     grassy_grove.setExit(game::SOUTH, &snowy_summit);
     grassy_grove.setExit(game::NORTH, &luminous_lake);
+    grassy_grove.setExit(game::EAST, &candy_crescent);
+    candy_crescent.setExit(game::WEST, &grassy_grove);
     luminous_lake.setExit(game::SOUTH, &grassy_grove);
     canvas.setRegion(&rocky_road, 5, 35);
 
