@@ -1,6 +1,3 @@
-[general]
 name = "Snowy Summit"
-
-[exits]
-west = "Rocky Road"
-north = "Grassy Grove"
+map_pos_x = 1
+map_pos_y = 0
