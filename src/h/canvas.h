@@ -17,10 +17,10 @@ namespace game {
 
             const std::string& name;
             QPixmap* pixmap;
-            int center_x;
-            int center_y;
+            int origin_x;
+            int origin_y;
 
-            explicit Sprite(QWidget* parent, const std::string& name, int center_x, int center_y);
+            explicit Sprite(QWidget* parent, const std::string& name, int origin_x, int origin_y);
             ~Sprite() override;
 
             int getX();
@@ -37,15 +37,15 @@ namespace game {
         public:
 
             Sprite* carrot;
-            Region* region = nullptr;
+            Map::Region* region = nullptr;
             QLabel* top_textbox = nullptr;
             QLabel* bottom_textbox = nullptr;
 
             explicit Canvas(QWidget* parent);
             ~Canvas() override;
 
-            void setRegion(Region* map_region, int x, int y);
-            void moveCarrot(Direction dir);
+            void setRegion(Map::Region* map_region, int x, int y);
+            void moveCarrot(int dx, int dy);
 
         protected:
 

@@ -12,9 +12,9 @@
 void parseMapRegionAttrs() {
 
     for (const auto& region_folder : std::filesystem::directory_iterator("../images/map-regions")) {
-        const std::string attrs_toml_path = region_folder.path().string() + "\\attrs.toml";
-        const std::string src_png = region_folder.path().string() + "\\src.png";
-        const std::string outline_png = region_folder.path().string() + "\\outline.png";
+        const std::string attrs_toml_path = region_folder.path().generic_string() + "/attrs.toml";
+        const std::string src_png = region_folder.path().generic_string() + "/src.png";
+        const std::string outline_png = region_folder.path().generic_string() + "/outline.png";
 
         std::string name;
         std::string map_pos_x_str;
@@ -56,16 +56,20 @@ void parseMapRegionAttrs() {
             map_pos_x,
             map_pos_y
         );
+
+        std::cout << (int) map_pos_x << std::endl;
+        std::cout << (int) map_pos_y << std::endl;
     }
 
 }
 
 
 int main(int argc, char **argv) {
+
     QApplication app(argc, argv);
     QSplashScreen splash(QPixmap("../images/misc/splash.png"));
-    splash.show();
 
+    splash.show();
     QThread::sleep(1);
 
     parseMapRegionAttrs();
@@ -73,48 +77,10 @@ int main(int argc, char **argv) {
     MainWindow mainWindow;
     game::Canvas canvas(&mainWindow);
 
-    game::Region rocky_road(
-        "Rocky Road",
-        "../images/map-regions/rocky-road/src.png",
-        "../images/map-regions/rocky-road/outline.png"
-    );
+    auto* spawn = game::Map::regions.at(std::make_pair(0, 0));
+    canvas.setRegion(spawn, 5, 35);
 
-    game::Region snowy_summit(
-        "Snowy Summit",
-        "../images/map-regions/snowy-summit/src.png",
-        "../images/map-regions/snowy-summit/outline.png"
-    );
-
-    game::Region grassy_grove(
-        "Grassy Grove",
-        "../images/map-regions/grassy-grove/src.png",
-        "../images/map-regions/grassy-grove/outline.png"
-    );
-
-    game::Region luminous_lake(
-        "Luminous Lake",
-        "../images/map-regions/luminous-lake/src.png",
-        "../images/map-regions/luminous-lake/outline.png"
-    );
-
-    game::Region candy_crescent(
-        "Candy Crescent",
-        "../images/map-regions/candy-crescent/src.png",
-        "../images/map-regions/candy-crescent/outline.png"
-    );
-
-    // Setting up connections
-    rocky_road.setExit(game::EAST, &snowy_summit);
-    snowy_summit.setExit(game::WEST, &rocky_road);
-    snowy_summit.setExit(game::NORTH, &grassy_grove);
-    grassy_grove.setExit(game::SOUTH, &snowy_summit);
-    grassy_grove.setExit(game::NORTH, &luminous_lake);
-    grassy_grove.setExit(game::EAST, &candy_crescent);
-    candy_crescent.setExit(game::WEST, &grassy_grove);
-    luminous_lake.setExit(game::SOUTH, &grassy_grove);
-    canvas.setRegion(&rocky_road, 5, 35);
-
-    std::cout << "Map regions @ (1, 0): " <<  game::Map::regions.at(std::make_pair(1, 0))->name << std::endl;
+    std::cout << "Current Map Region (0, 0): " <<  game::Map::regions.at(std::make_pair(0, 0))->name << std::endl;
 
     mainWindow.show();
     splash.finish(&mainWindow);
