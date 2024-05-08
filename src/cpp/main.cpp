@@ -57,8 +57,6 @@ void parseMapRegionAttrs() {
             map_pos_y
         );
 
-        std::cout << (int) map_pos_x << std::endl;
-        std::cout << (int) map_pos_y << std::endl;
     }
 
 }
@@ -80,7 +78,7 @@ int main(int argc, char **argv) {
     auto* spawn = game::Map::regions.at(std::make_pair(0, 0));
     canvas.setRegion(spawn, 5, 35);
 
-    std::cout << "Current Map Region (0, 0): " <<  game::Map::regions.at(std::make_pair(0, 0))->name << std::endl;
+    std::cout << "Current Map Region (0, 0): " << spawn->name << std::endl;
 
     mainWindow.show();
     splash.finish(&mainWindow);
