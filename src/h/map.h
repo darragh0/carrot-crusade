@@ -36,11 +36,13 @@ namespace game {
                     uint8_t map_pos_y
             );
 
-            ~Region() = default;
+            ~Region();
         };
 
+        static void deleteRegions();
+
         // Could use singleton instead ig
-        static std::unordered_map<std::pair<uint8_t, uint8_t>, Region *, CoordsHasher> regions;
+        static std::unordered_map<std::pair<uint8_t, uint8_t>, Region*, CoordsHasher> regions;
     };
 
 }

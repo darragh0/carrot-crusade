@@ -6,7 +6,6 @@
 #include "../h/canvas.h"
 #include <filesystem>
 #include <fstream>
-#include <vector>
 #include <QVBoxLayout>
 
 
@@ -28,26 +27,12 @@ void parseMapRegionAttrs() {
         std::getline(file, map_pos_y_str);
         file.close();
 
-        const uint8_t first_quote_idx = name.find('"');
-        name = name.substr(
-            first_quote_idx + 1,
-            name.length() - 2 - first_quote_idx
-        );
+        name = name.substr(8, name.length() - 9);
 
-        const uint8_t equal_symbol_idx_x = map_pos_x_str.find('=');
-        map_pos_x_str = map_pos_x_str.substr(
-            equal_symbol_idx_x + 1,
-            map_pos_x_str.length() - 1 - equal_symbol_idx_x
-        );
-
+        map_pos_x_str = map_pos_x_str.substr(12, map_pos_x_str.length() - 12);
         const uint8_t map_pos_x = std::stoi(map_pos_x_str);
 
-        const uint8_t equal_symbol_idx_y = map_pos_y_str.find('=');
-        map_pos_y_str = map_pos_y_str.substr(
-                equal_symbol_idx_y + 1,
-                map_pos_y_str.length() - 1 - equal_symbol_idx_y
-        );
-
+        map_pos_y_str = map_pos_y_str.substr(12, map_pos_y_str.length() - 12);
         const uint8_t map_pos_y = std::stoi(map_pos_y_str);
 
         new game::Map::Region(
@@ -74,37 +59,35 @@ int main(int argc, char **argv) {
     parseMapRegionAttrs();
 
     MainWindow mainWindow;
-    game::Canvas canvas(&mainWindow);
+    auto* canvas = new game::Canvas(&mainWindow);
 
     auto* spawn = game::Map::regions.at(std::make_pair(0, 0));
     auto* textbox = new QLabel(&mainWindow);
 
-    textbox->setStyleSheet(
-        "QLabel { "
-        "    font-size: 25px;"
-        "    background-color: #bfa483;"
-        "    border: 0.25em solid #98684a;"
-        "    border-radius: 0.25em;"
-        "    padding: 0.1em;"
-        "    color: black;"
-        "    font-size: 1rem;"
-        "    "
-        "}"
-    );
-
+    textbox->setStyleSheet(game::TEXTBOX_CSS);
     textbox->setAlignment(Qt::AlignCenter);
     textbox->setFixedSize(spawn->pixmap->width() * game::PIXEL_SCALE_FACTOR, 100);
 
+    canvas->setTextBox(textbox);
+    canvas->setRegion(spawn, 5, 35);
+
     // Create a layout for the central widget of the main window
     auto* centralLayout = new QVBoxLayout(mainWindow.centralWidget());
-    centralLayout->addWidget(&canvas, 0, Qt::AlignCenter); // Add the canvas to the layout and center it horizontally
+    centralLayout->addWidget(canvas, 0, Qt::AlignCenter); // Add the canvas to the layout and center it horizontally
     centralLayout->addWidget(textbox, 0, Qt::AlignCenter);
 
+    // Adding centralLayout means it takes focus, hence the following:
+    canvas->setFocus();
+
     splash.finish(&mainWindow);
-    canvas.setTextBox(textbox);
-    canvas.setRegion(spawn, 5, 35);
-    canvas.setFocus();
     mainWindow.showMaximized();
 
-    return QApplication::exec();
+    int ret = QApplication::exec();
+
+    game::Map::deleteRegions();
+    delete centralLayout;
+    delete canvas;
+    delete textbox;
+
+    return ret;
 }

@@ -1,7 +1,5 @@
 #include "../h/map.h"
 #include <iostream>
-#include <utility>
-
 
 //size_t game::Map::CoordsHasher::operator()(const Coords &coords) const {
 size_t game::Map::CoordsHasher::operator()(const std::pair<uint8_t, uint8_t>& coords) const {
@@ -18,11 +16,24 @@ game::Map::Region::Region(
         const std::string& outlined_img_src,
         const uint8_t map_pos_x,
         const uint8_t map_pos_y
-    ) : name(std::move(name)),
+    )
+
+    :   name(std::move(name)),
         pixmap(new QPixmap(img_src.c_str())),
-        outline((new QPixmap(outlined_img_src.c_str()))->toImage()),
+        outline(QPixmap(outlined_img_src.c_str()).toImage()),
         coords(std::make_pair(map_pos_x, map_pos_y)) {
-//        coords(Coords(map_pos_x, map_pos_y)) {
 
     Map::regions[this->coords] = this;
-} // TODO: Cleanup
+
+}
+
+
+game::Map::Region::~Region() {
+    delete this->pixmap;
+}
+
+
+void game::Map::deleteRegions() {
+    for (const auto& region : Map::regions)
+        delete region.second;
+}

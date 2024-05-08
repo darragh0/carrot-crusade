@@ -45,13 +45,11 @@ void game::Canvas::setTextBox(QLabel *label) {
 game::Canvas::Canvas(QWidget* parent)
     : QLabel(parent),
       carrot(new Sprite(this, "Carrot", game::CARROT_ORIGIN_X, game::CARROT_ORIGIN_Y)) {
-
-    this->setFocus();  // To notify on keyPressEvent
 }
 
 
 game::Canvas::~Canvas() {
-    delete this->region;
+    delete this->textbox;
     delete this->carrot;
 }
 

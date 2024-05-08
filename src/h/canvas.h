@@ -15,7 +15,7 @@ namespace game {
 
         public:
 
-            const std::string& name;
+            [[maybe_unused]] const std::string& name;
             QPixmap* pixmap;
             int origin_x;
             int origin_y;
