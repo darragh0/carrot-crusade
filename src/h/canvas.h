@@ -39,14 +39,14 @@ namespace game {
 
             Sprite* carrot;
             Map::Region* region = nullptr;
-            QLabel* top_textbox = nullptr;
-            QLabel* bottom_textbox = nullptr;
+            QLabel* textbox = nullptr;
 
             explicit Canvas(QWidget* parent);
             ~Canvas() override;
 
             void setRegion(Map::Region* map_region, int x, int y);
             void moveCarrot(int dx, int dy);
+            void setTextBox(QLabel* textbox);
 
         protected:
 

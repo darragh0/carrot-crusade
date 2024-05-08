@@ -77,39 +77,34 @@ int main(int argc, char **argv) {
     game::Canvas canvas(&mainWindow);
 
     auto* spawn = game::Map::regions.at(std::make_pair(0, 0));
-    canvas.setRegion(spawn, 5, 35);
+    auto* textbox = new QLabel(&mainWindow);
 
-    std::cout << "Current Map Region (0, 0): " << spawn->name << std::endl;
+    textbox->setStyleSheet(
+        "QLabel { "
+        "    font-size: 25px;"
+        "    background-color: #bfa483;"
+        "    border: 0.25em solid #98684a;"
+        "    border-radius: 0.25em;"
+        "    padding: 0.1em;"
+        "    color: black;"
+        "    font-size: 1rem;"
+        "    "
+        "}"
+    );
+
+    textbox->setAlignment(Qt::AlignCenter);
+    textbox->setFixedSize(spawn->pixmap->width() * game::PIXEL_SCALE_FACTOR, 100);
 
     // Create a layout for the central widget of the main window
     auto* centralLayout = new QVBoxLayout(mainWindow.centralWidget());
     centralLayout->addWidget(&canvas, 0, Qt::AlignCenter); // Add the canvas to the layout and center it horizontally
+    centralLayout->addWidget(textbox, 0, Qt::AlignCenter);
 
     splash.finish(&mainWindow);
+    canvas.setTextBox(textbox);
+    canvas.setRegion(spawn, 5, 35);
     canvas.setFocus();
     mainWindow.showMaximized();
-
-    //    QPalette palette;
-    //    palette.setColor(QPalette::Window, Qt::darkGray);
-    //    palette.setColor(QPalette::WindowText, Qt::white);
-    //
-    //    auto* textbox = new QLabel(&mainWindow);
-    //    textbox->setStyleSheet("font-size: 2rem; border: 1em solid #dddddd; padding: 1em; margin: 0;");
-    //    textbox->setAutoFillBackground(true);
-    //    textbox->setPalette(palette);
-    //    textbox->setFixedSize(1024, 150);
-    //    textbox->move(0, 576);
-    //
-    //    auto *top_text = new QLabel(&mainWindow);
-    //    top_text->setFixedSize(1024, 50);
-    //    top_text->setStyleSheet("font-size: 5rem;");
-    //
-    //    auto *bottom_text = new QLabel(&mainWindow);
-    //    bottom_text->setFixedSize(1024, 100);
-    //    bottom_text->move(0, 50);
-    //
-    //    canvas.top_textbox = top_text;
-    //    canvas.bottom_textbox = bottom_text;
 
     return QApplication::exec();
 }
