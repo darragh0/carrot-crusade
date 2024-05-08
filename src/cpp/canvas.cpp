@@ -39,7 +39,7 @@ void game::Sprite::setCoords(int& x, int& y) {
 
 game::Canvas::Canvas(QWidget* parent)
     : QLabel(parent),
-      carrot(new Sprite(parent, "Carrot", game::CARROT_ORIGIN_X, game::CARROT_ORIGIN_Y)) {
+      carrot(new Sprite(this, "Carrot", game::CARROT_ORIGIN_X, game::CARROT_ORIGIN_Y)) {
 
     this->setFocus();  // To notify on keyPressEvent
 }
@@ -53,13 +53,18 @@ game::Canvas::~Canvas() {
 
 void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
 
-//    this->top_textbox->setText(map_region->name.c_str());
+    // this->top_textbox->setText(map_region->name.c_str());
+
+    static int count = 0;  // TODO: Document use of static local var
+    count++;
 
     int width = map_region->pixmap->width() * game::PIXEL_SCALE_FACTOR;
     int height = map_region->pixmap->height() * game::PIXEL_SCALE_FACTOR;
 
-    this->parentWidget()->setFixedSize(width, height);
-    this->setFixedSize(width, height);
+    if (count == 1)
+        this->setFixedSize(width, height);
+
+    // this->parentWidget()->setFixedSize(width, height);  // Don't use this when mainWindow is maximized!!!
     this->setPixmap(map_region->pixmap->scaled(width, height, Qt::KeepAspectRatio));
 
     this->region = map_region;

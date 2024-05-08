@@ -30,6 +30,7 @@ namespace game {
     };
 
 
+
     class Canvas : public QLabel {
 
         Q_OBJECT

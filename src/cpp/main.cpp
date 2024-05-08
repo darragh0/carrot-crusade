@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <vector>
+#include <QVBoxLayout>
 
 
 void parseMapRegionAttrs() {
@@ -80,8 +81,13 @@ int main(int argc, char **argv) {
 
     std::cout << "Current Map Region (0, 0): " << spawn->name << std::endl;
 
-    mainWindow.show();
+    // Create a layout for the central widget of the main window
+    auto* centralLayout = new QVBoxLayout(mainWindow.centralWidget());
+    centralLayout->addWidget(&canvas, 0, Qt::AlignCenter); // Add the canvas to the layout and center it horizontally
+
     splash.finish(&mainWindow);
+    canvas.setFocus();
+    mainWindow.showMaximized();
 
     //    QPalette palette;
     //    palette.setColor(QPalette::Window, Qt::darkGray);
