@@ -1,5 +1,8 @@
 #include "../h/canvas.h"
 #include <iostream>
+#include <QApplication>
+#include <QRect>
+#include <QScreen>
 
 
 game::Sprite::Sprite(QWidget *parent, const std::string& name, int origin_x, int origin_y)
@@ -37,14 +40,18 @@ void game::Sprite::setCoords(int& x, int& y) {
 }
 
 
-void game::Canvas::setTextBox(QLabel *label) {
-    this->textbox = label;
-}
-
-
 game::Canvas::Canvas(QWidget* parent)
     : QLabel(parent),
       carrot(new Sprite(this, "Carrot", game::CARROT_ORIGIN_X, game::CARROT_ORIGIN_Y)) {
+
+    this->setObjectName("game-canvas");  // Before setting stylesheet !important
+    this->setStyleSheet(game::CANVAS_CSS);
+    this->setAlignment(Qt::AlignTop);
+    this->textbox = new QLabel(this);
+    this->textbox->setObjectName("game-textbox");
+    this->textbox->setStyleSheet(game::TEXTBOX_CSS);
+    this->textbox->setAlignment(Qt::AlignCenter);
+    this->setFocus();
 }
 
 
@@ -60,13 +67,22 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
     count++;
 
     int width = map_region->pixmap->width() * game::PIXEL_SCALE_FACTOR;
-    int height = map_region->pixmap->height() * game::PIXEL_SCALE_FACTOR;
+    int height = map_region->pixmap->height() * game::PIXEL_SCALE_FACTOR + 100;
     const std::string txt = "<span style=\"color: blue; font-weight: bold;\">Current Region:</span> " + map_region->name;
 
-    if (count == 1)
+    if (count == 1) {
+        this->textbox->setFixedSize(width - 20, 90);
         this->setFixedSize(width, height);
 
-    // this->parentWidget()->setFixedSize(width, height);  // Don't use this when mainWindow is maximized!!!
+        QScreen* screen = QApplication::primaryScreen();
+        QRect geom = screen->availableGeometry();  // Excludes Taskbar (otherwise height includes it)
+
+        int horizontal_padding = (geom.width() - width) / 2;
+        int vertical_padding = (geom.height() - height) / 2;
+
+        this->move(horizontal_padding,vertical_padding);
+        this->textbox->move(10, height - 100);
+    }
 
     this->textbox->setText(QString::fromStdString(txt));
     this->setPixmap(map_region->pixmap->scaled(width, height, Qt::KeepAspectRatio));

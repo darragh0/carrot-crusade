@@ -46,7 +46,6 @@ namespace game {
 
             void setRegion(Map::Region* map_region, int x, int y);
             void moveCarrot(int dx, int dy);
-            void setTextBox(QLabel* textbox);
 
         protected:
 

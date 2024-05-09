@@ -22,22 +22,24 @@ namespace game {
         };
 
         class Region {
-        public:
-            const std::string name;
-            QPixmap *pixmap;
-            QImage outline;
-            std::pair<uint8_t, uint8_t> coords;
+            public:
+                const std::string name;
+                QPixmap *pixmap;
+                QImage outline;
+                std::pair<uint8_t, uint8_t> coords;
 
-            Region(
-                    std::string name,
-                    const std::string &img_src,
-                    const std::string &outlined_img_src,
-                    uint8_t map_pos_x,
-                    uint8_t map_pos_y
-            );
+                Region(
+                        std::string name,
+                        const std::string &img_src,
+                        const std::string &outlined_img_src,
+                        uint8_t map_pos_x,
+                        uint8_t map_pos_y
+                );
 
-            ~Region();
+                ~Region();
         };
+
+        static void init();
 
         static void deleteRegions();
 
