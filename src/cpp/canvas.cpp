@@ -7,7 +7,7 @@ game::Sprite::Sprite(QWidget *parent, const std::string& name, int origin_x, int
       name(name),
       origin_x(origin_x),
       origin_y(origin_y),
-      pixmap(new QPixmap("../images/sprites/carrot.png")) {
+      pixmap(new QPixmap("../assets/images/sprites/carrot.png")) {
 
     int width = this->pixmap->width() * game::PIXEL_SCALE_FACTOR;
     int height = this->pixmap->height() * game::PIXEL_SCALE_FACTOR;

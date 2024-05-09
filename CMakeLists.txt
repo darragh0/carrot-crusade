@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(caret_crusade)
+project(carrot_crusade)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_AUTOMOC ON)
@@ -11,9 +11,10 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Multimedia
         REQUIRED)
 
-add_executable(caret_crusade
+add_executable(carrot_crusade
         src/cpp/main.cpp
         src/h/map.h
         src/cpp/map.cpp
@@ -24,10 +25,11 @@ add_executable(caret_crusade
         src/h/util.h
 )
 
-target_link_libraries(caret_crusade
+target_link_libraries(carrot_crusade
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::Multimedia
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)

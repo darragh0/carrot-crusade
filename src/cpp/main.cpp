@@ -6,12 +6,13 @@
 #include "../h/canvas.h"
 #include <filesystem>
 #include <fstream>
-#include <QVBoxLayout>
+#include <QMediaPlayer>
+#include <QScreen>
 
 
 void parseMapRegionAttrs() {
 
-    for (const auto& region_folder : std::filesystem::directory_iterator("../images/map-regions")) {
+    for (const auto& region_folder : std::filesystem::directory_iterator("../assets/images/map-regions")) {
         const std::string attrs_toml_path = region_folder.path().generic_string() + "/attrs.toml";
         const std::string src_png = region_folder.path().generic_string() + "/src.png";
         const std::string outline_png = region_folder.path().generic_string() + "/outline.png";
@@ -51,7 +52,7 @@ void parseMapRegionAttrs() {
 int main(int argc, char **argv) {
 
     QApplication app(argc, argv);
-    QSplashScreen splash(QPixmap("../images/misc/splash.png"));
+    QSplashScreen splash(QPixmap("../assets/images/misc/splash.png"));
 
     splash.show();
     QThread::sleep(1);
@@ -70,14 +71,22 @@ int main(int argc, char **argv) {
 
     canvas->setTextBox(textbox);
     canvas->setRegion(spawn, 5, 35);
-
-    // Create a layout for the central widget of the main window
-    auto* centralLayout = new QVBoxLayout(mainWindow.centralWidget());
-    centralLayout->addWidget(canvas, 0, Qt::AlignCenter); // Add the canvas to the layout and center it horizontally
-    centralLayout->addWidget(textbox, 0, Qt::AlignCenter);
-
-    // Adding centralLayout means it takes focus, hence the following:
     canvas->setFocus();
+
+    auto* screen = QApplication::primaryScreen();
+    QRect geom = screen->availableGeometry();  // Excludes Taskbar (otherwise height includes it)
+
+    int canvas_w = canvas->width();
+    int canvas_h = canvas->height();
+    int textbox_h = canvas->textbox->height();
+
+    int horizontal_padding = (geom.width() - canvas_w) / 2;
+    int vertical_padding = (geom.height() - canvas_h - textbox_h) / 2;
+
+    canvas->move(horizontal_padding,vertical_padding);
+    canvas->textbox->move(horizontal_padding, vertical_padding + canvas_h);
+
+//    QMediaPlayer player;
 
     splash.finish(&mainWindow);
     mainWindow.showMaximized();
@@ -85,9 +94,6 @@ int main(int argc, char **argv) {
     int ret = QApplication::exec();
 
     game::Map::deleteRegions();
-    delete centralLayout;
-    delete canvas;
-    delete textbox;
 
     return ret;
 }
