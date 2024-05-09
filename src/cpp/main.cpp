@@ -6,8 +6,8 @@
 #include "../h/canvas.h"
 #include <filesystem>
 #include <fstream>
-#include <QMediaPlayer>
 #include <QScreen>
+#include <windows.h>
 
 
 void parseMapRegionAttrs() {
@@ -48,7 +48,6 @@ void parseMapRegionAttrs() {
 
 }
 
-
 int main(int argc, char **argv) {
 
     QApplication app(argc, argv);
@@ -65,11 +64,14 @@ int main(int argc, char **argv) {
     auto* spawn = game::Map::regions.at(std::make_pair(0, 0));
     auto* textbox = new QLabel(&mainWindow);
 
+    textbox->setObjectName("game-textbox");
     textbox->setStyleSheet(game::TEXTBOX_CSS);
     textbox->setAlignment(Qt::AlignCenter);
     textbox->setFixedSize(spawn->pixmap->width() * game::PIXEL_SCALE_FACTOR, 100);
 
     canvas->setTextBox(textbox);
+    canvas->setObjectName("game-canvas");
+    canvas->setStyleSheet(game::CANVAS_CSS);
     canvas->setRegion(spawn, 5, 35);
     canvas->setFocus();
 
@@ -86,10 +88,14 @@ int main(int argc, char **argv) {
     canvas->move(horizontal_padding,vertical_padding);
     canvas->textbox->move(horizontal_padding, vertical_padding + canvas_h);
 
-//    QMediaPlayer player;
-
     splash.finish(&mainWindow);
     mainWindow.showMaximized();
+
+    PlaySound(TEXT(
+        "..\\assets\\audio\\songs\\themesong.wav"),
+      nullptr,
+      SND_ASYNC | SND_LOOP
+    );
 
     int ret = QApplication::exec();
 

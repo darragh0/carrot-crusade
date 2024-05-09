@@ -5,13 +5,12 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_PREFIX_PATH "C:/Qt/6.7.0/mingw_64")
+set(CMAKE_PREFIX_PATH "C:/Qt/6.7.0/mingw_64/")
 
 find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
-        Multimedia
         REQUIRED)
 
 add_executable(carrot_crusade
@@ -29,7 +28,7 @@ target_link_libraries(carrot_crusade
         Qt::Core
         Qt::Gui
         Qt::Widgets
-        Qt::Multimedia
+        winMM.Lib
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
