@@ -45,11 +45,10 @@ game::Canvas::Canvas(QWidget* parent)
       carrot(new Sprite(this, "Carrot", game::CARROT_ORIGIN_X, game::CARROT_ORIGIN_Y)) {
 
     this->setObjectName("game-canvas");  // Before setting stylesheet !important
-    this->setStyleSheet(game::CANVAS_CSS);
-    this->setAlignment(Qt::AlignTop);
+    this->setStyleSheet(game::stylesheets::CANVAS);this->setAlignment(Qt::AlignTop);
     this->textbox = new QLabel(this);
     this->textbox->setObjectName("game-textbox");
-    this->textbox->setStyleSheet(game::TEXTBOX_CSS);
+    this->textbox->setStyleSheet(game::stylesheets::TEXTBOX);
     this->textbox->setAlignment(Qt::AlignCenter);
     this->setFocus();
 }
@@ -71,7 +70,7 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
     const std::string txt = "<span style=\"color: blue; font-weight: bold;\">Current Region:</span> " + map_region->name;
 
     if (count == 1) {
-        this->textbox->setFixedSize(width - 20, 90);
+        this->textbox->setFixedSize(width, 100);
         this->setFixedSize(width, height);
 
         QScreen* screen = QApplication::primaryScreen();
@@ -81,7 +80,7 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
         int vertical_padding = (geom.height() - height) / 2;
 
         this->move(horizontal_padding,vertical_padding);
-        this->textbox->move(10, height - 100);
+        this->textbox->move(0, height - 100);
     }
 
     this->textbox->setText(QString::fromStdString(txt));
@@ -119,7 +118,8 @@ void game::Canvas::moveCarrot(int dx, int dy) {
         uint8_t next_region_x = this->region->coords.first + dx;
         uint8_t next_region_y = this->region->coords.second - dy;  // '-', since QT does Y coordinate from top to bottom
 
-        Map::Region* next_region = Map::regions.at(std::make_pair(next_region_x, next_region_y));
+        Map* map = Map::getInstance();
+        Map::Region* next_region = map->getRegion(next_region_x, next_region_y);
         this->setRegion(next_region, next_x, next_y);
         return;
     }

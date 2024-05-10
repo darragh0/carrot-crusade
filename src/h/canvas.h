@@ -44,7 +44,7 @@ namespace game {
             explicit Canvas(QWidget* parent);
             ~Canvas() override;
 
-            void setRegion(Map::Region* map_region, int x, int y);
+            void setRegion(Map::Region* map_region, int x = 5, int y = 35);
             void moveCarrot(int dx, int dy);
 
         protected:

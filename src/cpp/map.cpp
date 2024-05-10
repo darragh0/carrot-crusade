@@ -9,9 +9,6 @@ size_t game::Map::CoordsHasher::operator()(const std::pair<uint8_t, uint8_t>& co
 }
 
 
-std::unordered_map<std::pair<uint8_t, uint8_t>, game::Map::Region*, game::Map::CoordsHasher> game::Map::regions = {};
-
-
 game::Map::Region::Region(
         std::string name,
         const std::string& img_src,
@@ -24,9 +21,6 @@ game::Map::Region::Region(
         pixmap(new QPixmap(img_src.c_str())),
         outline(QPixmap(outlined_img_src.c_str()).toImage()),
         coords(std::make_pair(map_pos_x, map_pos_y)) {
-
-    Map::regions[this->coords] = this;
-
 }
 
 
@@ -35,7 +29,7 @@ game::Map::Region::~Region() {
 }
 
 
-void game::Map::init() {
+game::Map::Map() {
 
     for (const auto& region_folder : std::filesystem::directory_iterator("../assets/images/map-regions")) {
         const std::string attrs_toml_path = region_folder.path().generic_string() + "/attrs.toml";
@@ -61,7 +55,7 @@ void game::Map::init() {
         map_pos_y_str = map_pos_y_str.substr(12, map_pos_y_str.length() - 12);
         const uint8_t map_pos_y = std::stoi(map_pos_y_str);
 
-        new game::Map::Region(
+        auto* region = new game::Map::Region(
                 name,
                 src_png,
                 outline_png,
@@ -69,11 +63,28 @@ void game::Map::init() {
                 map_pos_y
         );
 
+        this->addRegion(region);
     }
 }
 
 
-void game::Map::deleteRegions() {
+
+game::Map* game::Map::getInstance() {
+    static Map* instance = new Map();
+    return instance;
+}
+
+
+game::Map::Region* game::Map::getRegion(uint8_t x, uint8_t y) {
+    return Map::regions.at(std::make_pair(x, y));
+}
+
+
+void game::Map::addRegion(game::Map::Region* region) {
+    this->regions[region->coords] = region;  // Overriding
+}
+
+game::Map::~Map() {
     for (const auto& region : Map::regions)
         delete region.second;
 }
