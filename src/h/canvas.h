@@ -3,33 +3,11 @@
 #include <QLabel>
 #include <QKeyEvent>
 
+#include "entity.h"
 #include "map.h"
 
 
 namespace game {
-
-
-    class Sprite : public QLabel {
-
-        Q_OBJECT
-
-        public:
-
-            [[maybe_unused]] const std::string& name;
-            QPixmap* pixmap;
-            int origin_x;
-            int origin_y;
-
-            explicit Sprite(QWidget* parent, const std::string& name, int origin_x, int origin_y);
-            ~Sprite() override;
-
-            int getX();
-            int getY();
-
-            void setCoords(int& x, int& y);
-    };
-
-
 
     class Canvas : public QLabel {
 
@@ -37,14 +15,14 @@ namespace game {
 
         public:
 
-            Sprite* carrot;
+            Sprite* carrot = nullptr;
             Map::Region* region = nullptr;
             QLabel* textbox = nullptr;
 
             explicit Canvas(QWidget* parent);
             ~Canvas() override;
 
-            void setRegion(Map::Region* map_region, int x = 5, int y = 35);
+            void setRegion(Map::Region* map_region, int x = -1, int y = -1);
             void moveCarrot(int dx, int dy);
 
         protected:

@@ -17,18 +17,18 @@ int main(int argc, char **argv) {
     game::Map* map = game::Map::getInstance();
 
     auto* canvas = new game::Canvas(&mainWindow);
-    auto* spawn = map->getRegion(0, 0);
+    auto* spawn = map->getRegion(0, 2);
 
     canvas->setRegion(spawn);
 
     splash.finish(&mainWindow);
     mainWindow.showMaximized();
 
-     PlaySound(
-         TEXT("..\\assets\\audio\\songs\\themesong.wav"),
-         nullptr,
-         SND_ASYNC | SND_LOOP
-     );
+//    PlaySound(
+//         TEXT("..\\assets\\audio\\songs\\themesong.wav"),
+//         nullptr,
+//         SND_ASYNC | SND_LOOP
+//    );
 
     int ret = QApplication::exec();
 

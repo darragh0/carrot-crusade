@@ -1,0 +1,5 @@
+name = "Paddle Boat"
+origin_x = 8
+origin_y = 9
+canvas_pos_x = 50
+canvas_pos_y = 40

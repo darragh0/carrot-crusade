@@ -6,7 +6,7 @@
 
 #include <QPixmap>
 
-#include "util.h"
+#include "../h/entity.h"
 
 
 namespace game {
@@ -21,11 +21,9 @@ namespace game {
 
         private:
 
-            /**
-             * Used to hash a standard pair of x & y coordinates.
-             */
-            struct CoordsHasher {
-                size_t operator()(const std::pair<uint8_t, uint8_t> &coords) const;
+            template <typename T>
+            struct intPairHash {
+                size_t operator()(const std::pair<T, T> &coords) const;
             };
 
             Map();
@@ -40,8 +38,9 @@ namespace game {
 
                 public:
 
+                    std::unordered_map<std::pair<uint16_t, uint16_t>, Sprite*, intPairHash<uint16_t>> sprites = {};
                     const std::string name;
-                    std::pair<uint8_t, uint8_t> coords;
+                    std::pair<const uint8_t, const uint8_t> map_coords;
 
                     /**
                      * The region's image, stored as a pixel map, along with
@@ -67,7 +66,7 @@ namespace game {
 
         private:
 
-            std::unordered_map<std::pair<uint8_t, uint8_t>, Region*, CoordsHasher> regions = {};
+            std::unordered_map<std::pair<uint8_t, uint8_t>, Region*, intPairHash<uint8_t>> regions = {};
 
         public:
 
@@ -96,6 +95,7 @@ namespace game {
 
         /// @see Canvas::setRegion(Region*, int, int)
         friend class Canvas;
+        friend void parseRegionAttrs(Map* map);
 
     };
 

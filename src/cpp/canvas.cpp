@@ -1,49 +1,21 @@
 #include "../h/canvas.h"
+
 #include <iostream>
+
 #include <QApplication>
 #include <QRect>
 #include <QScreen>
 
-
-game::Sprite::Sprite(QWidget *parent, const std::string& name, int origin_x, int origin_y)
-    : QLabel(parent),
-      name(name),
-      origin_x(origin_x),
-      origin_y(origin_y),
-      pixmap(new QPixmap("../assets/images/sprites/carrot.png")) {
-
-    int width = this->pixmap->width() * game::PIXEL_SCALE_FACTOR;
-    int height = this->pixmap->height() * game::PIXEL_SCALE_FACTOR;
-
-    this->setFixedSize(width, height);
-    this->setPixmap(this->pixmap->scaled(width, height, Qt::KeepAspectRatio));
-}
-
-
-game::Sprite::~Sprite() {
-    delete this->pixmap;
-}
-
-
-int game::Sprite::getX() {
-    return (this->x() / game::PIXEL_SCALE_FACTOR) + this->origin_x;
-}
-
-
-int game::Sprite::getY() {
-    return (this->y() / game::PIXEL_SCALE_FACTOR) + this->origin_y;
-}
-
-
-void game::Sprite::setCoords(int& x, int& y) {
-    this->move((x - this->origin_x) * game::PIXEL_SCALE_FACTOR, (y - this->origin_y) * game::PIXEL_SCALE_FACTOR);
-}
+#include "../h/util.h"
+#include "../h/constants.h"
 
 
 game::Canvas::Canvas(QWidget* parent)
-    : QLabel(parent),
-      carrot(new Sprite(this, "Carrot", game::CARROT_ORIGIN_X, game::CARROT_ORIGIN_Y)) {
+    : QLabel(parent) {
 
+    this->carrot = parseCarrotAttrs();
+    this->carrot->setParent(this);
+    this->carrot->show();
     this->setObjectName("game-canvas");  // Before setting stylesheet !important
     this->setStyleSheet(game::stylesheets::CANVAS);this->setAlignment(Qt::AlignTop);
     this->textbox = new QLabel(this);
@@ -65,6 +37,11 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
     static int count = 0;  // TODO: Document use of static local var
     count++;
 
+    if (x == -1 && y == -1) {
+        x = this->carrot->canvas_pos_x;
+        y = this->carrot->canvas_pos_y;
+    }
+
     int width = map_region->pixmap->width() * game::PIXEL_SCALE_FACTOR;
     int height = map_region->pixmap->height() * game::PIXEL_SCALE_FACTOR + 100;
     const std::string txt = "<span style=\"color: blue; font-weight: bold;\">Current Region:</span> " + map_region->name;
@@ -81,12 +58,24 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
 
         this->move(horizontal_padding,vertical_padding);
         this->textbox->move(0, height - 100);
+    } else {
+        for (auto& pair : this->region->sprites) {
+            Sprite* sprite = pair.second;
+            sprite->hide();
+        }
     }
 
     this->textbox->setText(QString::fromStdString(txt));
     this->setPixmap(map_region->pixmap->scaled(width, height, Qt::KeepAspectRatio));
     this->region = map_region;
     this->carrot->setCoords(x, y);
+
+    for (auto& pair : this->region->sprites) {
+        Sprite* sprite = pair.second;
+        sprite->setParent(this);  // !!!!!!!!!!!!!!!!!!!! FIXME
+        sprite->show();
+        sprite->setCoords(sprite->canvas_pos_x, sprite->canvas_pos_y);
+    }
 }
 
 
@@ -115,8 +104,8 @@ void game::Canvas::moveCarrot(int dx, int dy) {
         next_x = (HORIZONTAL_TILES + next_x) % game::HORIZONTAL_TILES;
         next_y = (VERTICAL_TILES + next_y) % game::VERTICAL_TILES;
 
-        uint8_t next_region_x = this->region->coords.first + dx;
-        uint8_t next_region_y = this->region->coords.second - dy;  // '-', since QT does Y coordinate from top to bottom
+        uint8_t next_region_x = this->region->map_coords.first + dx;
+        uint8_t next_region_y = this->region->map_coords.second - dy;  // '-', since QT does Y coordinate from top to bottom
 
         Map* map = Map::getInstance();
         Map::Region* next_region = map->getRegion(next_region_x, next_region_y);
@@ -126,8 +115,9 @@ void game::Canvas::moveCarrot(int dx, int dy) {
 
     QRgb next_pixel = this->region->outline.pixel(next_x, next_y);
 
-    if (qRed(next_pixel) == 255)
+    if (qRed(next_pixel) == 255 && qGreen(next_pixel) == 0 && qBlue(next_pixel) == 0) {
         return;
+    }
 
     this->carrot->setCoords(next_x, next_y);
     std::cout << "x: " << next_x << "\ty: " << next_y << std::endl;

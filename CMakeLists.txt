@@ -9,7 +9,7 @@ set(CMAKE_PREFIX_PATH "C:/Qt/6.7.0/mingw_64/")
 
 find_package(Qt6 COMPONENTS
         Core
-        Gui
+#        Gui
         Widgets
         REQUIRED)
 
@@ -22,11 +22,15 @@ add_executable(carrot_crusade
         src/h/canvas.h
         src/cpp/canvas.cpp
         src/h/util.h
+        src/h/entity.h
+        src/cpp/entity.cpp
+        src/h/constants.h
+        src/cpp/util.cpp
 )
 
 target_link_libraries(carrot_crusade
         Qt::Core
-        Qt::Gui
+#        Qt::Gui
         Qt::Widgets
         winMM.Lib
 )
