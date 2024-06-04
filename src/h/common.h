@@ -13,7 +13,7 @@ namespace game {
     union Sprite {
         Carrot* carrot;
         Vehicle* vehicle;
-        Item* item;
+        HintNote* item;
     };
 
     void parseRegionAttrs(Map* map);

@@ -9,7 +9,7 @@ game::Sprite* game::parseSpriteAttrs(const std::string& dir, const bool carrot, 
     const std::string attrs_toml_path = dir + "/attrs.toml";
     const std::string src_png = dir + "/src.png";
 
-    std::string name, origin_x_str, origin_y_str, canvas_pos_x_str, canvas_pos_y_str;
+    std::string name, origin_x_str, origin_y_str, canvas_pos_x_str, canvas_pos_y_str, description_str, hint_n;
     std::ifstream file(attrs_toml_path);
 
     std::getline(file, name);
@@ -17,6 +17,11 @@ game::Sprite* game::parseSpriteAttrs(const std::string& dir, const bool carrot, 
     std::getline(file, origin_y_str);
     std::getline(file, canvas_pos_x_str);
     std::getline(file, canvas_pos_y_str);
+
+    if ((!carrot) && (!vehicle)) {
+        std::getline(file, description_str);
+        std::getline(file, hint_n);
+    }
 
     file.close();
 
@@ -39,7 +44,10 @@ game::Sprite* game::parseSpriteAttrs(const std::string& dir, const bool carrot, 
         auto* v = new Vehicle(nullptr, name, src_png, origin_x, origin_y, map_pos_x, map_pos_y);
         sprite->vehicle = v;
     } else {
-        auto* i = new Item(nullptr, name, src_png, origin_x, origin_y, map_pos_x, map_pos_y, "");
+        description_str = description_str.substr(8, description_str.length() - 9);
+        hint_n = hint_n.substr(4, hint_n.length() - 4);
+        const int n = std::stoi(hint_n);
+        auto* i = new HintNote(nullptr, name, src_png, origin_x, origin_y, map_pos_x, map_pos_y, description_str, n);
         sprite->item = i;
     }
 
@@ -98,7 +106,7 @@ void game::parseRegionAttrs(Map* map) {
         std::string items_path = path + "/sprites/items";
         if (std::filesystem::is_directory(items_path)) {
             for (const auto& sprite_folder : std::filesystem::directory_iterator(items_path)) {
-                game::Sprite* sprite = parseSpriteAttrs(sprite_folder.path().generic_string(), false, true);
+                game::Sprite* sprite = parseSpriteAttrs(sprite_folder.path().generic_string(), false, false);
                 region->items[std::make_pair(sprite->item->canvas_pos_x, sprite->item->canvas_pos_y)] = sprite;
             }
         }

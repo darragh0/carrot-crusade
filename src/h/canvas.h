@@ -18,6 +18,7 @@ namespace game {
             Carrot* carrot = nullptr;
             Map::Region* region = nullptr;
             QLabel* textbox = nullptr;
+            QLabel* note = nullptr;
 
             explicit Canvas(QWidget* parent);
             ~Canvas() override;
@@ -25,6 +26,7 @@ namespace game {
             void setRegion(Map::Region* map_region, int x = -1, int y = -1);
             void moveCarrot(int dx, int dy);
             void interactWithSprite();
+            void toggleNoteDisplay() const;
 
         protected:
 

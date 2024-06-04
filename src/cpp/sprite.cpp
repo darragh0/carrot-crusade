@@ -68,7 +68,7 @@ game::Carrot::Carrot(
 }
 
 
-void game::Carrot::operator << (game::Item* item) {
+void game::Carrot::operator << (game::HintNote* item) {
 
 }
 
@@ -139,7 +139,7 @@ void game::Vehicle::doAction(game::Carrot *carrot) {
 }
 
 
-game::Item::Item(
+game::HintNote::HintNote(
         QWidget *parent,
         // NOLINTNEXTLINE
         const std::string name,
@@ -148,18 +148,39 @@ game::Item::Item(
         const int origin_y,
         const uint16_t canvas_pos_x,
         const uint16_t canvas_pos_y,
-        std::string description
+        std::string description,
+        const int n
         )
         : SpriteEntity(parent, name, img_src, origin_x, origin_y, canvas_pos_x, canvas_pos_y),
-          description(std::move(description)) {
+          description(std::move(description)),
+          number(n) {
 }
 
 
-const std::string& game::Item::getDescription() const {
+const std::string& game::HintNote::getDescription() const {
     return this->description;
 }
 
 
-void game::Item::doAction(game::Carrot *carrot) {
+void game::HintNote::doAction(game::Carrot *carrot) {
     // TODO: This.
+    carrot->current_note = this;
+    this->hide();
+}
+
+
+int game::HintNote::hintNumber() const {
+    return this->number;
+}
+
+
+game::HintNote::HintNote(game::HintNote &note) {
+    this->description = std::string(note.description);
+    this->number = int(note.number);
+    this->name = std::string(note.name);
+    this->origin_x = int(note.origin_x);
+    this->origin_y = int(note.origin_y);
+    this->canvas_pos_x = uint16_t(note.canvas_pos_x);
+    this->canvas_pos_y = uint16_t(note.canvas_pos_y);
+    this->description = std::string(note.description);
 }

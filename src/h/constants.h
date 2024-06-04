@@ -19,6 +19,8 @@ namespace game {
 
         const QString CANVAS =
                 "QLabel#game-canvas {"
+                "    border: 3px solid white;"
+                "    border-radius: 5px;"
                 "}";
 
         const QString TEXTBOX =
@@ -29,6 +31,22 @@ namespace game {
                 "    color: black;"
                 "    font-size: 1rem;"
                 "    text-align: center;"
+                "    border-left: 3px solid white;"
+                "    border-right: 3px solid white;"
+                "    border-bottom: 3px solid white;"
+                "    border-bottom-left-radius: 5px;"
+                "    border-bottom-right-radius: 5px;"
+                "}";
+
+        const QString NOTE_TEXTBOX =
+                "QLabel#game-note {"
+                "    font-size: 18px;"
+                "    background-color: #ecc351;"
+                "    border: 2px solid #bfa483;"
+                "    padding: 0.1em;"
+                "    color: black;"
+                "    text-align: center;"
+                "    border-radius: 3px;"
                 "}";
     }
 }

@@ -1,0 +1,7 @@
+name = "Hint 2"
+origin_x = 4
+origin_y = 4
+canvas_pos_x = 110
+canvas_pos_y = 42
+text = "You found me, YAY! Anyways, you like boats?"
+n = 2

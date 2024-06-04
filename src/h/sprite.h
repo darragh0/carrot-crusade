@@ -17,12 +17,12 @@ namespace game {
 
         public:
 
-            [[maybe_unused]] const std::string name;
+            [[maybe_unused]] std::string name;
             QPixmap* pixmap;
-            const uint16_t canvas_pos_x;
-            const uint16_t canvas_pos_y;
-            const int origin_x;
-            const int origin_y;
+            uint16_t canvas_pos_x;
+            uint16_t canvas_pos_y;
+            int origin_x;
+            int origin_y;
 
         protected:
 
@@ -66,15 +66,16 @@ namespace game {
     };
 
 
-    class Item : public virtual SpriteEntity {
+    class HintNote : public virtual SpriteEntity {
 
         private:
 
-            const std::string description;
+            std::string description;
+            int number : 3;
 
         public:
 
-            Item(
+            HintNote(
                     QWidget* parent,
                     // NOLINTNEXTLINE
                     const std::string name,
@@ -83,11 +84,15 @@ namespace game {
                     int origin_y,
                     uint16_t canvas_pos_x,
                     uint16_t canvas_pos_y,
-                    std::string description
+                    std::string description,
+                    int n
             );
+
+            HintNote(HintNote& note);
 
             [[nodiscard]] const std::string& getDescription() const;
             void doAction(Carrot* carrot) override;
+            [[nodiscard]] int hintNumber() const;
     };
 
     class Character {
@@ -96,7 +101,8 @@ namespace game {
             Character() = default;
 
         public:
-            virtual void operator << (Item* item) = 0;
+            HintNote* current_note = nullptr;
+            virtual void operator << (HintNote* item) = 0;
             virtual void operator << (Vehicle* vehicle) = 0;
     };
 
@@ -105,6 +111,7 @@ namespace game {
         private:
 
             Vehicle* ride = nullptr;
+            HintNote* note = nullptr;
 
         public:
 
@@ -122,7 +129,7 @@ namespace game {
             void setRide(Vehicle* vehicle);
             bool rideIs(Vehicle* vehicle);
             void endRide();
-            void operator << (Item* item) override;
+            void operator << (HintNote* item) override;
             void operator << (Vehicle* vehicle) override;
             void doAction(Carrot* carrot) override;
             void setCoords(int x, int y) override;

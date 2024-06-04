@@ -1,0 +1,7 @@
+name = "Hint 4"
+origin_x = 4
+origin_y = 4
+canvas_pos_x = 80
+canvas_pos_y = 50
+text = "Snow way! You firgured it out :D"
+n = 4

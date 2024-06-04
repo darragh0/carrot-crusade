@@ -20,6 +20,11 @@ game::Canvas::Canvas(QWidget* parent)
     this->setObjectName("game-canvas");  // Before setting stylesheet !important
     this->setStyleSheet(game::stylesheets::CANVAS);this->setAlignment(Qt::AlignTop);
     this->textbox = new QLabel(this);
+    this->note = new QLabel(this);
+    this->note->setObjectName("game-note");
+    this->note->setAlignment(Qt::AlignCenter);
+    this->note->setStyleSheet(game::stylesheets::NOTE_TEXTBOX);
+    this->note->hide();
     this->textbox->setObjectName("game-textbox");
     this->textbox->setStyleSheet(game::stylesheets::TEXTBOX);
     this->textbox->setAlignment(Qt::AlignCenter);
@@ -49,6 +54,7 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
 
     if (count == 1) {
         this->textbox->setFixedSize(width, 100);
+        this->note->setFixedSize(width / 2, 100);
         this->setFixedSize(width, height);
 
         QScreen* screen = QApplication::primaryScreen();
@@ -59,6 +65,7 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
 
         this->move(horizontal_padding,vertical_padding);
         this->textbox->move(0, height - 100);
+        this->note->move((width / 2) / 2, height / 2 - 100);
     } else {
         for (auto& pair : this->region->vehicles) {
             Sprite* sprite = pair.second;
@@ -76,8 +83,6 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
     this->region = map_region;
     this->carrot->setCoords(x, y);
 
-    // TODO: items
-
     for (auto& pair : this->region->vehicles) {
         Sprite* sprite = pair.second;
 
@@ -93,6 +98,40 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
         }
     }
 
+    for (auto& pair : this->region->items) {
+        Sprite* sprite = pair.second;
+
+        if (HintNote* i = sprite->item) {
+            i->setParent(this);
+
+            int carrot_hint_n = 0;
+
+            if (this->carrot->current_note)
+                carrot_hint_n = this->carrot->current_note->hintNumber();
+
+            const int n = i->hintNumber();
+            std::cout << i->name << std::endl;
+            std::cout << i->hintNumber() << std::endl;
+
+            if (n == carrot_hint_n + 1) {
+                const std::string text = "<b>" + i->name + ": </b>" + i->getDescription();
+                i->show();
+                i->setCoords(i->canvas_pos_x, i->canvas_pos_y);
+                this->note->setText(QString::fromStdString(text));
+            }
+        }
+    }
+
+}
+
+
+void game::Canvas::toggleNoteDisplay() const {
+    if (this->carrot->current_note) {
+        if (this->note->isVisible())
+            this->note->hide();
+        else
+            this->note->show();
+    }
 }
 
 
@@ -140,6 +179,21 @@ void game::Canvas::interactWithSprite() {
             *(this->carrot) << (sprite->vehicle);
         }
     }
+
+    for (const auto& item_pair : this->region->items) {
+        Sprite* sprite = item_pair.second;
+        const int item_x = sprite->item->getX();
+        const int item_y = sprite->item->getY();
+
+        const double dist = std::sqrt(
+            std::pow(x - item_x, 2)
+            + std::pow(y - item_y, 2)
+        );
+
+        if (dist < 5) {
+            sprite->item->doAction(this->carrot);
+        }
+    }
 }
 
 
@@ -183,7 +237,6 @@ void game::Canvas::moveCarrot(int dx, int dy) {
         return;
     }
 
-    // The following handles for vehicles too
     this->carrot->setCoords(next_x, next_y);
     std::cout << "x: " << next_x << "\ty: " << next_y << std::endl;
 
@@ -200,7 +253,8 @@ void game::Canvas::keyPressEvent(QKeyEvent *event) {
         case Qt::Key_A: dx--; break;
         case Qt::Key_S: dy++; break;
         case Qt::Key_D: dx++; break;
-        case Qt::Key_Space: this->interactWithSprite();
+        case Qt::Key_Space: this->interactWithSprite(); break;
+        case Qt::Key_N: this->toggleNoteDisplay(); break;
         default: return;
     }
 

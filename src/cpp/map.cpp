@@ -53,6 +53,7 @@ void game::Map::addRegion(game::Map::Region* region) {
     this->regions[region->map_coords] = region;  // Overriding
 }
 
+
 game::Map::~Map() {
     for (const auto& region : Map::regions)
         delete region.second;
