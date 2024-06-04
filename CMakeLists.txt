@@ -21,11 +21,13 @@ add_executable(carrot_crusade
         src/cpp/mainwindow.cpp
         src/h/canvas.h
         src/cpp/canvas.cpp
-        src/h/util.h
-        src/h/entity.h
-        src/cpp/entity.cpp
+        src/h/common.h
+        src/h/sprite.h
+        src/cpp/sprite.cpp
         src/h/constants.h
-        src/cpp/util.cpp
+        src/cpp/common.cpp
+        src/h/excepts.h
+        src/cpp/excepts.cpp
 )
 
 target_link_libraries(carrot_crusade

@@ -1,19 +1,20 @@
 #include "../h/canvas.h"
 
 #include <iostream>
+#include <cmath>
 
 #include <QApplication>
 #include <QRect>
 #include <QScreen>
+#include <QPoint>
 
-#include "../h/util.h"
 #include "../h/constants.h"
 
 
 game::Canvas::Canvas(QWidget* parent)
     : QLabel(parent) {
 
-    this->carrot = parseCarrotAttrs();
+    this->carrot = game::parseSpriteAttrs(CARROT_DIR, true)->carrot;  // FIXME DELETE *
     this->carrot->setParent(this);
     this->carrot->show();
     this->setObjectName("game-canvas");  // Before setting stylesheet !important
@@ -59,9 +60,14 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
         this->move(horizontal_padding,vertical_padding);
         this->textbox->move(0, height - 100);
     } else {
-        for (auto& pair : this->region->sprites) {
+        for (auto& pair : this->region->vehicles) {
             Sprite* sprite = pair.second;
-            sprite->hide();
+            sprite->vehicle->hide();
+        }
+
+        for (auto& pair : this->region->items) {
+            Sprite* sprite = pair.second;
+            sprite->item->hide();
         }
     }
 
@@ -70,11 +76,69 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
     this->region = map_region;
     this->carrot->setCoords(x, y);
 
-    for (auto& pair : this->region->sprites) {
+    // TODO: items
+
+    for (auto& pair : this->region->vehicles) {
         Sprite* sprite = pair.second;
-        sprite->setParent(this);  // !!!!!!!!!!!!!!!!!!!! FIXME
-        sprite->show();
-        sprite->setCoords(sprite->canvas_pos_x, sprite->canvas_pos_y);
+
+        if (Vehicle* v = sprite->vehicle) {
+            v->setParent(this);
+            v->show();
+            this->carrot->raise();
+
+            if (this->carrot->rideIs(v))
+                continue;
+
+            v->setCoords(v->canvas_pos_x, v->canvas_pos_y);
+        }
+    }
+
+}
+
+
+void game::Canvas::interactWithSprite() {
+    if (this->carrot->inVehicle()) {
+        const int x = this->carrot->getX();
+        const int y = this->carrot->getY();
+
+        for (int _x = x; _x < game::HORIZONTAL_TILES; _x++) {
+            for (int _y = y; _y < game::VERTICAL_TILES; _y++) {
+                QRgb pixel = this->region->outline.pixel(_x, _y);
+
+                const double dist = std::sqrt(
+                        std::pow(x - _x, 2)
+                        + std::pow(y - _y, 2)
+                );
+
+                if (dist < 10 && qRed(pixel) == 255 && qGreen(pixel) == 0 && qBlue(pixel) == 0) {
+                   this->carrot->endRide();
+                   this->carrot->setCoords(_x + 2, _y + 2);
+                   return;
+                }
+            }
+        }
+
+        return;
+    }
+
+    QPoint p = this->mapFromGlobal(QCursor::pos());
+    const int x = p.x() / game::PIXEL_SCALE_FACTOR;
+    const int y = p.y() / game::PIXEL_SCALE_FACTOR;
+
+    // Sort by min dist.
+    for (const auto& sprite_pair : this->region->vehicles) {
+        Sprite* sprite = sprite_pair.second;
+        const int sprite_x = sprite->vehicle->getX();
+        const int sprite_y = sprite->vehicle->getY();
+
+        const double dist = std::sqrt(
+            std::pow(x - sprite_x, 2)
+             + std::pow(y - sprite_y, 2)
+        );
+
+        if (dist < 10) {
+            *(this->carrot) << (sprite->vehicle);
+        }
     }
 }
 
@@ -119,6 +183,7 @@ void game::Canvas::moveCarrot(int dx, int dy) {
         return;
     }
 
+    // The following handles for vehicles too
     this->carrot->setCoords(next_x, next_y);
     std::cout << "x: " << next_x << "\ty: " << next_y << std::endl;
 
@@ -135,6 +200,7 @@ void game::Canvas::keyPressEvent(QKeyEvent *event) {
         case Qt::Key_A: dx--; break;
         case Qt::Key_S: dy++; break;
         case Qt::Key_D: dx++; break;
+        case Qt::Key_Space: this->interactWithSprite();
         default: return;
     }
 

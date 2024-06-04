@@ -1,10 +1,10 @@
-#pragma once
+#ifndef CANVAS_INCLUDED_
+#define CANVAS_INCLUDED_
 
 #include <QLabel>
 #include <QKeyEvent>
 
-#include "entity.h"
-#include "map.h"
+#include "../h/map.h"
 
 
 namespace game {
@@ -15,7 +15,7 @@ namespace game {
 
         public:
 
-            Sprite* carrot = nullptr;
+            Carrot* carrot = nullptr;
             Map::Region* region = nullptr;
             QLabel* textbox = nullptr;
 
@@ -24,6 +24,7 @@ namespace game {
 
             void setRegion(Map::Region* map_region, int x = -1, int y = -1);
             void moveCarrot(int dx, int dy);
+            void interactWithSprite();
 
         protected:
 
@@ -32,3 +33,5 @@ namespace game {
     };
 
 }
+
+#endif

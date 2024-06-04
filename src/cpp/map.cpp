@@ -1,12 +1,11 @@
 #include "../h/map.h"
 
-#include "../h/util.h"
 
-
-template <>
+template<>
 size_t game::Map::intPairHash<uint8_t>::operator()(const std::pair<uint8_t, uint8_t>& coords) const {
     return coords.first + (*(&coords.second) << 8);
 }
+
 
 template<>
 size_t game::Map::intPairHash<uint16_t>::operator()(const std::pair<uint16_t, uint16_t>& coords) const {

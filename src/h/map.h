@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GMAP_INCLUDED_
+#define GMAP_INCLUDED_
 
 #include <string>
 #include <unordered_map>
@@ -6,7 +7,7 @@
 
 #include <QPixmap>
 
-#include "../h/entity.h"
+#include "../h/common.h"
 
 
 namespace game {
@@ -22,8 +23,9 @@ namespace game {
         private:
 
             template <typename T>
-            struct intPairHash {
-                size_t operator()(const std::pair<T, T> &coords) const;
+            class intPairHash {
+                public:
+                    size_t operator()(const std::pair<T, T>& coords) const;
             };
 
             Map();
@@ -38,7 +40,8 @@ namespace game {
 
                 public:
 
-                    std::unordered_map<std::pair<uint16_t, uint16_t>, Sprite*, intPairHash<uint16_t>> sprites = {};
+                    std::unordered_map<std::pair<uint16_t, uint16_t>, game::Sprite*, intPairHash<uint16_t>> vehicles = {};
+                    std::unordered_map<std::pair<uint16_t, uint16_t>, game::Sprite*, intPairHash<uint16_t>> items = {};
                     const std::string name;
                     std::pair<const uint8_t, const uint8_t> map_coords;
 
@@ -100,3 +103,5 @@ namespace game {
     };
 
 }
+
+#endif

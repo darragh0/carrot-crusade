@@ -2,7 +2,7 @@
 
 #include <QApplication>
 #include <QSplashScreen>
-
+#include <iostream>
 #include "../h/mainwindow.h"
 #include "../h/canvas.h"
 
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     game::Map* map = game::Map::getInstance();
 
     auto* canvas = new game::Canvas(&mainWindow);
-    auto* spawn = map->getRegion(0, 2);
+    auto* spawn = map->getRegion(0, 0);
 
     canvas->setRegion(spawn);
 

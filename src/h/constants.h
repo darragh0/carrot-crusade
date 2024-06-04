@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONSTS_INCLUDED_
+#define CONSTS_INCLUDED_
 
 #include <string>
 #include <cstdint>
@@ -31,3 +32,5 @@ namespace game {
                 "}";
     }
 }
+
+#endif
