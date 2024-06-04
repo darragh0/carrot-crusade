@@ -174,6 +174,7 @@ int game::HintNote::hintNumber() const {
     return this->number;
 }
 
+
 game::HintNote::HintNote(HintNote& note) :
     SpriteEntity(
         nullptr,

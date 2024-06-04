@@ -20,7 +20,6 @@ game::Map::Region::Region(
         const uint8_t map_pos_x,
         const uint8_t map_pos_y
     )
-
     : name(std::move(name)),
       pixmap(new QPixmap(img_src.c_str())),
       outline(QPixmap(outlined_img_src.c_str()).toImage()),
