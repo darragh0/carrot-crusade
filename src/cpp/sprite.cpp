@@ -64,7 +64,8 @@ game::Carrot::Carrot(
     uint16_t canvas_pos_x,
     uint16_t canvas_pos_y
     )
-    : SpriteEntity(parent, name, img_src, origin_x, origin_y, canvas_pos_x, canvas_pos_y) {
+    : SpriteEntity(parent, name, img_src, origin_x, origin_y, canvas_pos_x, canvas_pos_y),
+      Character() {
 }
 
 
@@ -173,14 +174,15 @@ int game::HintNote::hintNumber() const {
     return this->number;
 }
 
-
-game::HintNote::HintNote(game::HintNote &note) {
-    this->description = std::string(note.description);
-    this->number = int(note.number);
-    this->name = std::string(note.name);
-    this->origin_x = int(note.origin_x);
-    this->origin_y = int(note.origin_y);
-    this->canvas_pos_x = uint16_t(note.canvas_pos_x);
-    this->canvas_pos_y = uint16_t(note.canvas_pos_y);
-    this->description = std::string(note.description);
-}
+game::HintNote::HintNote(HintNote& note) :
+    SpriteEntity(
+        nullptr,
+        std::string(note.name),
+        std::string(note.description),
+        note.origin_x,
+        note.origin_y,
+        note.canvas_pos_x,
+        note.canvas_pos_y),
+        description(std::string(note.description)),
+        number(note.number)
+{}

@@ -88,7 +88,7 @@ namespace game {
                     int n
             );
 
-            HintNote(HintNote& note);
+            HintNote(game::HintNote &note);
 
             [[nodiscard]] const std::string& getDescription() const;
             void doAction(Carrot* carrot) override;

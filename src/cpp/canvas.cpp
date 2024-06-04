@@ -110,8 +110,6 @@ void game::Canvas::setRegion(Map::Region* map_region, int x, int y) {
                 carrot_hint_n = this->carrot->current_note->hintNumber();
 
             const int n = i->hintNumber();
-            std::cout << i->name << std::endl;
-            std::cout << i->hintNumber() << std::endl;
 
             if (n == carrot_hint_n + 1) {
                 const std::string text = "<b>" + i->name + ": </b>" + i->getDescription();
